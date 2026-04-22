@@ -22,7 +22,7 @@ Reduce revenue loss caused by fake or unstable demand.
 ```
 ตอนนี้ฉันกำลังทำ Project วิชา Data Analytics and Business Intelligence สำหรับการทำ Project วิชานี้
 
-ฉันต้องการให้คุณ generate prompt สำหรับสร้าง dataset ในรูปแบบของไฟล์ Excel (.xlsx) ภายใต้บริบทดังนี้
+ฉันต้องการให้คุณ generate prompt สำหรับสร้าง dataset ในรูปแบบของไฟล์ csv ภายใต้บริบทดังนี้
 
 Scenario: The Hotel Business Owner's Dilemma
 Context: You own a mid-sized, independent hotel ("The Azure Stay"). While the property is beautiful, profitability is stagnant. You have identified three critical pain points that require data-driven solutions:
@@ -135,6 +135,11 @@ A standard date dimension to make "Day of Week" analysis easier.
 - date_key: YYYY-MM-DD.
 - day_name: Mon, Tue...
 - event_flag: Is there a major concert/event in town? (Events often cause "fake" bookings where people reserve rooms just in case).
+
+Table 5: dim_reason_cancellation
+A table for indentifying cancellation codes
+- cancellation_reason_code: Code indicating why (e.g., RSN_01).
+- reasons: Reaons of cancellation of each code (Change of Plans, Found Cheaper, Flight/Weather, Medical/Emergency, Visa Issues, Unknown)
 
 Project Evaluation Rubric (Total 100 Points)
 
