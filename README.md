@@ -1,4 +1,4 @@
-# Hotel_Revenue_Leakage_Management_Project
+# The Azure Stay Hotel Revenue Leakage Management
 
 ## Prompt is used for generating data
 ในการ generate dataset ชุดนี้ขึ้นมาใช้ทั้งหมด 2 prompt ตามลำดับดังนี้
