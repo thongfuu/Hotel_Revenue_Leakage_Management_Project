@@ -204,21 +204,16 @@ Instructions:
 Generate a comprehensive relational dataset in a spreadsheet format with exactly 10,000 records in the fact table covering the period from January 2024 to June 2025. The dataset must strictly adhere to Data Quality rules: 100% Completeness (no missing values unless logically required, e.g., cancellation_date for checked-in guests) and 100% Consistency.
 
 Schema Requirements:
-
-fact_bookings: booking_id (PK), guest_id (FK), booking_date, check_in_date, lead_time_days, length_of_stay, channel_id (FK), policy_id (FK), status (Checked-In, Cancelled, No-Show), cancellation_date, cancellation_reason_code, adr_usd, gross_revenue_usd, deposit_paid_usd, penalty_charged_usd.
-
-dim_policies: policy_id (PK), policy_name, cancellation_deadline_hours, penalty_type, is_refundable.
-
-dim_channels: channel_id (PK), channel_name, commission_rate.
-
-dim_guests: guest_id (PK), country_of_origin, total_bookings_lifetime, total_cancellations_lifetime, cancellation_ratio. (Ensure aggregate fields align perfectly with fact_bookings).
-
-dim_calendar: date_key (PK), day_of_week, month, is_weekend, event_flag.
+1. fact_bookings: booking_id (PK), guest_id (FK), booking_date, check_in_date, lead_time_days, length_of_stay, channel_id (FK), policy_id (FK), status (Checked-In, Cancelled, No-Show), cancellation_date, cancellation_reason_code, adr_usd, gross_revenue_usd, deposit_paid_usd, penalty_charged_usd.
+2. dim_policies: policy_id (PK), policy_name, cancellation_deadline_hours, penalty_type, is_refundable.
+3. dim_channels: channel_id (PK), channel_name, commission_rate.
+4. dim_guests: guest_id (PK), country_of_origin, total_bookings_lifetime, total_cancellations_lifetime, cancellation_ratio. (Ensure aggregate fields align perfectly with fact_bookings).
+5. dim_calendar: date_key (PK), day_of_week, month, is_weekend, event_flag.
 
 Behavioral Rules & Embedded Insights (Do not explicitly document these outputs, but embed them in data generation):
-Create a realistic distribution of booking channels (e.g., OTAs, Direct, Walk-in).
-Inject logical correlations: specific combinations of booking channels and lenient policies must have disproportionately high cancellation rates.
-Simulate "Serial Cancellers": A small percentage of guests (e.g., 5%) should be responsible for a large volume of cancellations, booking well in advance and cancelling just before deadlines.
-Simulate "Event Fake Demand": When event_flag = 1 in dim_calendar, there should be a spike in bookings with flexible policies that end up cancelling.
-Calculate penalty_charged_usd dynamically based on the difference between cancellation_date, check_in_date, and the policy rules in dim_policies.
+- Create a realistic distribution of booking channels (e.g., OTAs, Direct, Walk-in).
+- Inject logical correlations: specific combinations of booking channels and lenient policies must have disproportionately high cancellation rates.
+- Simulate "Serial Cancellers": A small percentage of guests (e.g., 5%) should be responsible for a large volume of cancellations, booking well in advance and cancelling just before deadlines.
+- Simulate "Event Fake Demand": When event_flag = 1 in dim_calendar, there should be a spike in bookings with flexible policies that end up cancelling.
+- Calculate penalty_charged_usd dynamically based on the difference between cancellation_date, check_in_date, and the policy rules in dim_policies.
 ```
