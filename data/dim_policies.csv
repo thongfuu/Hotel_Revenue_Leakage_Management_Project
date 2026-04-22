@@ -1,0 +1,6 @@
+policy_id,policy_name,cancellation_deadline_hours,penalty_type,is_refundable
+POL_01,Free Cancellation 48h,48,None,True
+POL_02,Free Cancellation 24h,24,None,True
+POL_03,Non-Refundable,0,Full,False
+POL_04,Partial Refund 72h,72,Partial,True
+POL_05,Flexible Weekly,168,None,True
