@@ -250,3 +250,58 @@ Behavioral Rules & Embedded Insights (Do not explicitly document these outputs, 
 - Simulate "Event Fake Demand": When event_flag = 1 in dim_calendar, there should be a spike in bookings with flexible policies that end up cancelling.
 - Calculate penalty_charged_usd dynamically based on the difference between cancellation_date, check_in_date, and the policy rules in dim_policies.
 ```
+
+## Promt สำหรับทำ eda + visualization
+```
+You are an Expert Data Scientist and Revenue Manager for a hotel. I have a dataset for "The Azure Stay" hotel. 
+IMPORTANT: DO NOT generate any synthetic data or mock data. Assume the 6 CSV files already exist in the working directory.
+
+Your task is to programmatically GENERATE a complete, ready-to-use Jupyter Notebook file named `Azure_Hotel_Project.ipynb`. 
+Do NOT output the notebook content as plain text with tags like [Markdown Cell] or [Python Code Cell] for me to copy-paste. Instead, you MUST write and execute a Python script using the `nbformat` library to construct the notebook cells, save it as `Azure_Hotel_Project.ipynb`, and provide me with a downloadable link.
+
+**Data Dictionary (Use these EXACT column names):**
+1. `fact_bookings.csv`: booking_id, guest_id, booking_date, check_in_date, lead_time_days, length_of_stay, channel_id, policy_id, status (Checked-In, Cancelled, No-Show), cancellation_date, cancellation_reason_code, adr_usd, gross_revenue_usd, deposit_paid_usd, penalty_charged_usd
+2. `dim_guests.csv`: guest_id, country_of_origin, total_bookings_lifetime, total_cancellations_lifetime, cancellation_ratio
+3. `dim_channels.csv`: channel_id, channel_name, commission_rate
+4. `dim_policies.csv`: policy_id, policy_name, cancellation_deadline_hours, penalty_type, is_refundable
+5. `dim_calendar.csv`: date_key, day_of_week, month, is_weekend, event_flag
+6. `dim_reason_cancellation.csv`: cancellation_reason_code, reason
+
+**Structure of the generated Notebook:**
+
+**Part 1: Data Loading & Preparation**
+- [Code Cell]: Include code to load the 6 CSV files (using pandas) and merge the `fact_bookings` table with all dimensions appropriately.
+- [Code Cell]: Convert date columns to datetime objects. Calculate a new feature: `cancellation_window_days` (difference between `check_in_date` and `cancellation_date`). Note: `lead_time_days` is already provided.
+
+**Part 2: Hypothesis Testing & EDA**
+For EACH of the following 9 hypotheses, create these consecutive cells in the notebook:
+1. **[Markdown Cell]:** State the Hypothesis in Thai and explain the Formula/Calculation used to test it.
+2. **[Code Cell]:** Clean, well-commented Python code to prepare the data, perform calculations, and plot the visualization using `matplotlib` and `seaborn`.
+3. **[Markdown Cell]:** - **Chart Justification:** Explain in Thai WHY this specific chart type is the most appropriate.
+   - **Findings & Root Cause:** Accurately interpret the (expected) results in Thai to identify the root cause of the problem.
+
+**The 9 Hypotheses to test:**
+1. Although the volume of 'Cancelled' is higher, 'No-Show' creates a higher Net Revenue Lost (gross_revenue_usd - penalty_charged_usd).
+2. Bookings via OTA channels have significantly higher Cancellation and No-Show rates compared to Direct Website bookings.
+3. The majority of cancellations come from 'Flexible' policies, but higher `deposit_paid_usd` amounts correlate with lower cancellation rates.
+4. Cancellation rates spike abnormally during Event days (`event_flag` == 1).
+5. Guests from different continents/regions (`country_of_origin`) exhibit different cancellation behaviors compared to domestic guests.
+6. A large portion of cancellations is repeatedly caused by the same group of guests ("Serial Cancellers" based on `cancellation_ratio`).
+7. Long Lead Time (`lead_time_days`) bookings have a higher probability of cancellation, and these guests tend to cancel very close to the check-in date (`cancellation_window_days`).
+8. No-Show behaviors are heavily concentrated on weekends (`is_weekend` == True).
+9. The Cancellation Penalty collected (`penalty_charged_usd`) falls extremely short of recovering the Revenue Lost (`gross_revenue_usd`), especially from Flexible policies booked via OTAs.
+
+**Part 3: Business Recommendations & Impact**
+- **[Markdown Cell]:** Provide 3-4 highly actionable pieces of advice (Recommendations) in Thai based on the findings from Part 2. 
+- Ensure these recommendations address:
+  - Optimizing marketing spend for high-profit/low-risk channels.
+  - Adjusting policy types or strictness (e.g., penalty rules, deposit requirements).
+  - Strategies to deal with Serial Cancellers or Long Lead Time risks.
+- Tie the recommendations back to the SMART objective: "Recovering at least 15% of lost revenue in the next 2 quarters."
+
+**Execution Rules:**
+- Use `nbformat.v4` to create `new_markdown_cell` and `new_code_cell`.
+- Write the Python code robustly, handling potential Null values (e.g., `cancellation_date` is null for 'Checked-In' status).
+- Output the explanations, Markdown text, and findings inside the notebook in professional Thai language (except for variable names in code).
+- Execute the script, generate the `.ipynb` file, and provide the download link.
+```
