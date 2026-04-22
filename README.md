@@ -1,5 +1,20 @@
 # The Azure Stay Hotel Revenue Leakage Management
 
+## Background & Pain Points
+### Scenario:
+The Hotel Business Owner's Dilemma
+### Context:
+You own a mid-sized, independent hotel ("The Azure Stay"). While the property is beautiful, profitability is stagnant. You have identified three critical pain points that require data-driven solutions:
+### Pain Points (Problem):
+Revenue Leakage (Cancellations & No-Shows): Your calendar looks full two weeks out, but by the time the date arrives, you have empty rooms due to last-minute cancellations and no-shows that you can't resell.
+### Goal:
+Reduce revenue loss caused by fake or unstable demand.
+
+## Smart Objectives
+```
+เพื่อกู้คืนรายได้ที่สูญเสียไป อย่างน้อย 15% ภายในระยะเวลา 2 ไตรมาสเมื่อเทียบกับไตรมาสก่อนหน้า โดยอาศัยการวิเคราะห์ข้อมูลพฤติกรรมการยกเลิกการจอง เพื่อช่วยให้โรงแรมสามารถคัดเลือกลูกค้าที่มีความน่าเชื่อถือได้อย่างเหมาะสม
+```
+
 ## Prompt is used for generating data
 ในการ generate dataset ชุดนี้ขึ้นมาใช้ทั้งหมด 2 prompt ตามลำดับดังนี้
 
