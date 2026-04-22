@@ -224,6 +224,7 @@ Schema Requirements:
 3. dim_channels: channel_id (PK), channel_name, commission_rate.
 4. dim_guests: guest_id (PK), country_of_origin, total_bookings_lifetime, total_cancellations_lifetime, cancellation_ratio. (Ensure aggregate fields align perfectly with fact_bookings).
 5. dim_calendar: date_key (PK), day_of_week, month, is_weekend, event_flag.
+6. dim_reason_cancellation: cancellation_reason_code (PK) [RSN_01-RSN_06], reasons [Found Cheaper Price, Change of Plans, Flight/Weather, Visa Issues, Medical/Emergency, Unknown]
 
 Behavioral Rules & Embedded Insights (Do not explicitly document these outputs, but embed them in data generation):
 - Create a realistic distribution of booking channels (e.g., OTAs, Direct, Walk-in).
