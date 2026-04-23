@@ -45,7 +45,7 @@ Goal: Reduce revenue loss caused by fake or unstable demand.
 
 Smart Objective : เพื่อกู้คืนรายได้ที่สูญเสียไป อย่างน้อย 15% ภายในระยะเวลา 2 ไตรมาสเมื่อเทียบกับ ไตรมาสก่อนหน้า โดยอาศัยการวิเคราะห์ข้อมูลพฤติกรรมการยกเลิกการจอง เพื่อช่วยให้โรงแรมสามารถคัดเลือกลูกค้าที่มีความน่าเชื่อถือได้อย่างเหมาะสม
 
-Measures & Dimensions 
+Measures & Dimensions 
 These are the quantitative metrics used to evaluate performance.
 
 1. ADR (Average Daily Rate)
@@ -78,6 +78,32 @@ Calculation Formula: Sum(Cancelled Booking Value)
 Definition: Revenue retained from non-refundable bookings or late cancel fees.
 Calculation Formula: Sum(Penalty Fees Charged)
 
+8. RevPAR (Revenue Per Available Room)
+Definition: A performance metric used to assess the hotel's ability to fill available rooms at an average rate.
+Calculation Formula: Total Room Revenue / Total Rooms Available
+Range of Values: $0 - Max Potential Rate
+
+9. LOS (Length of Stay)
+Definition: The duration of a guest's visit, measured in nights. Important for analyzing guest behavior and cleaning costs.
+Calculation Formula: Check-out Date - Check-in Date
+Range of Values: 1 - 365+ (depending on policy)
+
+10. Net ADR
+Definition: Average revenue per room after deducting commissions.
+Calculation Formula: (Gross Revenue - Commission Cost) / Rooms Sold
+
+11. Commission Cost
+Definition: The actual dollar amount paid to the 3rd party.
+Calculation Formula: Gross Revenue * Commission Rate (or flat fee)
+
+12. Cost of Acquisition (COA) %
+Definition: The efficiency of the channel (lower is better).
+Calculation Formula: (Total Commission + Marketing Spend) / Total Revenue
+
+13. Net RevPAR
+Definition: Revenue per available room, adjusted for distribution costs.
+Calculation Formula: (Gross Revenue - Commission Cost) / Total Rooms Available
+
 Key Dimensions
 These are the categorical attributes used to slice and dice the measures.
 
@@ -109,7 +135,24 @@ Set of Possible Values: First Time, Repeat Loyal, Repeat Serial Canceller
 Definition: Grouping of Lead Time for easier analysis.
 Set of Possible Values: Last Minute (0-3 days), Short (4-14), Medium (15-60), Long (60+)
 
-Sample Dataset
+8. Room Type
+Definition: The physical category of the room inventory.
+Set of Possible Values: Standard Queen, Deluxe King, Suite, Ocean View,/ Accessible
+
+9. Customer Segment
+Definition: Classification of the guest's travel purpose.
+Set of Possible Values: Business, Leisure, Group, Transient, Wholesale
+
+10. Commission Model
+Definition: How the channel gets paid.
+Set of Possible Values: Percentage (e.g., 15%), Flat Fee (e.g., $5/booking), Merchant (Net Rate)
+
+11. Channel Type
+Definition: Categorization for cost analysis.
+Set of Possible Values: OTA (High Commission), Direct (Low Commission), Wholesale (Net Rate)
+
+โครงสร้าง ของ Dataset ที่ต้องการ (หน่วยเป็น thai baht)
+ต้องการให้ดาต้าทั้งหมดจากทุกตารางมีความ consistency ต้องสมเหตุสมผล และเชื่อมโยงกันอย่างถูกต้อง อย่าแค่สุ่มตัวเลขขึ้นมา แต่ทำให้ถูกต้องตามกฎที่สร้างขึ้นมาด้วย อาจเริ่มจากการสร้างตารางที่เป็นกฎและเงื่อนไขขึ้นมาก่อนก็ได้
 
 Table 1: fact_bookings (Enhanced Transaction Data)
 The central table. Note the addition of specific timestamp columns to track the "lifespan" of a booking.
@@ -117,16 +160,57 @@ The central table. Note the addition of specific timestamp columns to track the 
 - guest_id (FK): Links to dim_guests.
 - booking_date: Date created.
 - check_in_date: Scheduled arrival.
+- check_out_date: The scheduled departure date.
+- room_type_id: Foreign key linking to the Room Type dimension.
+- rate_code_id: Foreign key linking to the Rate Code dimension.
 - channel_id (FK): Links to dim_channels.
-- policy_id (FK): (New) Links to dim_policies (defines the rules for this specific booking).
+- segment_id: Foreign key linking to the Customer Segment dimension.
+- policy_id (FK): Links to dim_policies (defines the rules for this specific booking).
 - status: Confirmed, Cancelled, No-Show, Checked-In.
-- cancellation_date: (New) The date the cancellation occurred (NULL if not cancelled).
-- cancellation_reason_code: (New) Code indicating why (e.g., RSN_01).
+- total_room_revenue: The total revenue generated from the room rent (excluding taxes/extras).
+- number_of_rooms: Number of rooms booked in this specific reservation.
+- adults_count: Number of adults.
+- children_count: Number of children.
+- cancellation_date: The date the cancellation occurred (NULL if not cancelled).
+- cancellation_reason_code: Code indicating why (e.g., RSN_01).
 - gross_revenue: The potential revenue.
-- penalty_charged: (New) Amount charged despite cancellation (e.g., 1st night fee).
-- deposit_paid: (New) Boolean or Amount. Did they put money down? (High deposit = Low cancel risk).
+- gross_room_revenue: Total revenue paid by the guest (before commission).
+- commission_amount: The calculated cost paid to the channel for this specific booking.
+- net_room_revenue: gross_room_revenue - commission_amount.
+- penalty_charged: Amount charged despite cancellation (e.g., 1st night fee).
+- deposit_paid: Boolean or Amount. Did they put money down? (High deposit = Low cancel risk).
 
-Table 2: dim_policies (The Rules)
+Table 2: dim_room_inventory
+This table defines the hotel's capacity. It is essential for calculating "Total Rooms Available" for RevPAR and Occupancy.
+- date (Primary Key): A specific calendar date (e.g., 2025-10-01).
+- total_capacity: Total physical rooms in the hotel.
+- rooms_out_of_order: Number of rooms unavailable due to maintenance (cannot be sold).
+- rooms_available_for_sale: total_capacity - rooms_out_of_order.
+
+Table 3: dim_rate_codes
+A lookup table for pricing strategies.
+- rate_code_id (Primary Key): E.g., RC_CORP.
+- rate_name: E.g., "Corporate Flat Rate".
+- multiplier:
+- is_commissionable: Boolean (True/False) indicating if a commission is paid to a 3rd party.
+
+Table 4: dim_channels
+This is the critical table for this specific problem. It defines "who do we pay and how much?"
+- channel_id (Primary Key): E.g., CH_EXP.
+- channel_name: E.g., "Expedia".
+- channel_type: E.g., "OTA", "Direct", "Wholesaler".
+- commission_model: Type of cost (e.g., Percentage, Flat Fee, Net Rate).
+- commission_rate: The percentage fee paid to the channel (e.g., 0.15 for 15%).
+- contract_owner: The internal sales manager responsible for this relationship.
+
+Table 5: dim_roomtype
+- room_type_id (Primary Key):
+- room_type_name: 
+- base_rate: 
+- capacity_count:
+- max_capacity:
+
+Table 6: dim_policies (The Rules)
 This table helps you analyze if your policies are too loose or too strict.
 - policy_id (PK): Unique ID (e.g., POL_FLEX_24).
 - policy_name: Name (e.g., "24 Hour Flexible").
@@ -134,7 +218,7 @@ This table helps you analyze if your policies are too loose or too strict.
 - penalty_type: First Night, Full Stay, None.
 - is_refundable: Boolean (True/False).
 
-Table 3: dim_guests (Guest Behavior Profile)
+Table 7: dim_guests (Guest Behavior Profile)
 Crucial for identifying "Serial Cancellers" (people who book and cancel repeatedly).
 - guest_id (PK): Unique ID.
 - total_bookings_lifetime: Count of all bookings ever made.
@@ -142,16 +226,28 @@ Crucial for identifying "Serial Cancellers" (people who book and cancel repeated
 - cancellation_ratio: Calculated field (total_cancellations / total_bookings).
 - country_of_origin: Where they are from (some regions have higher cancel rates).
 
-Table 4: dim_calendar
+Table 8: dim_calendar
 A standard date dimension to make "Day of Week" analysis easier.
 - date_key: YYYY-MM-DD.
 - day_name: Mon, Tue...
+- is_weekend: Boolean flag.
+- is_holiday: Boolean flag for public holidays.
+- season: High Season, Low Season, Shoulder Season.
 - event_flag: Is there a major concert/event in town? (Events often cause "fake" bookings where people reserve rooms just in case).
 
-Table 5: dim_reason_cancellation
+Table 9: dim_reason_cancellations
 A table for indentifying cancellation codes
 - cancellation_reason_code: Code indicating why (e.g., RSN_01).
-- reasons: Reaons of cancellation of each code (Change of Plans, Found Cheaper, Flight/Weather, Medical/Emergency, Visa Issues, Unknown)
+- reasons: Reaons of cancellation of each code (Change of Plans, Found Cheaper, Flight/Weather, Work Conflict, Medical/Emergency, Visa Issues, Unknown)
+
+Table 10: fact_marketing_spend (Optional but Advanced)
+If you want to calculate the TRUE cost of your "Direct" channel, you need to account for ad spend, not just commissions.
+- spend_id (PK): Unique ID.
+- spend_date: The date the money was spent.
+- channel_id (FK): Links to dim_channels (specifically the Direct Website channel).
+- platform: Where the ad ran (e.g., Google Ads, Facebook).
+- cost_amount: The amount spent (e.g., $500).
+- clicks: Number of clicks generated.
 
 Project Evaluation Rubric (Total 100 Points)
 
@@ -177,19 +273,19 @@ Description of Excellence: Develops testable 3 hypotheses and correctly applies 
 2.2
 Criteria: GitHub Documentation
 Points: 15
-Description of Excellence: The repository is professionally organized with a clear README.md explaining the project. Includes code scripts, the AI-generated dataset, and a logical folder structure. Commit history shows consistent progress.  Set it as a public repository.  Thai or English is acceptable.
+Description of Excellence: The repository is professionally organized with a clear README.md explaining the project. Includes code scripts, the AI-generated dataset, and a logical folder structure. Commit history shows consistent progress.  Set it as a public repository.  Thai or English is acceptable.
 
 Section 3: Data Execution & EDA (30 Points)
 This section focuses on the technical application and the quality of the AI-generated dataset.
 3.1
-Criteria: AI Data Quality 
+Criteria: AI Data Quality 
 Points: 10
-Description of Excellence: AI-generated data strictly adheres to the required schema (e.g., fact_bookings, dim_channels, dim_guests).  Declare your prompt that is used for generating data.  Declare definitions and descriptions.  For any measure, declare how to calculate.  For any dimension derived from a conditional statement, declare it.  
+Description of Excellence: AI-generated data strictly adheres to the required schema (e.g., fact_bookings, dim_channels, dim_guests).  Declare your prompt that is used for generating data.  Declare definitions and descriptions.  For any measure, declare how to calculate.  For any dimension derived from a conditional statement, declare it.  
 
 3.2
 Criteria: EDA & Visualizations
 Points: 20
-Description of Excellence: Explain clearly what you want to explore in EDA.  Uses high-quality charts to analyze measures by critical dimensions like Booking Channel, Rate Code, or Policy Type.  Every chart must have your explanation why it is an appropriate choice.
+Description of Excellence: Explain clearly what you want to explore in EDA.  Uses high-quality charts to analyze measures by critical dimensions like Booking Channel, Rate Code, or Policy Type.  Every chart must have your explanation why it is an appropriate choice.
 
 Section 4: Insights & Impact (15 Points)
 This section evaluates the "Business Intelligence" aspect—turning data into value.
@@ -213,11 +309,11 @@ Description of Excellence: Professional delivery, clear slides, and effective st
 5.2
 Criteria: Participant Questioning
 Points: 5
-Description of Excellence: Group members participate mastery by contributing on questioning to the presenters. Every group representative (participant side) contributes to defending the analytical choices.  For each group presentation, timing is set at 10 minutes (7 minutes for presentation and 3 minutes for Q&A).  Questions must reflect your understanding in analytics.
+Description of Excellence: Group members participate mastery by contributing on questioning to the presenters. Every group representative (participant side) contributes to defending the analytical choices.  For each group presentation, timing is set at 10 minutes (7 minutes for presentation and 3 minutes for Q&A).  Questions must reflect your understanding in analytics.
 
 Dataset ที่ฉันต้องการให้คุณ Generate นั้นต้องมี Data Quality Rules
 1. Completeness ไม่ต้องมาทำขั้นตอน Data cleaning อีกเลย
-2. Consistency (ความสอดคล้อง)
+2. Consistency (ความสอดคล้อง) **สำคัญมาก
 3. พฤติกรรมของลูกค้าสมเหตุสมผลตามโลกจริง
 
 โดยต้องการข้อมูลอย่างน้อย 10,000 records
@@ -228,27 +324,39 @@ Dataset ที่ฉันต้องการให้คุณ Generate น�
 
 2. Second propmt
 ```
-Role: Act as a Senior Data Engineer and Hotel Revenue Manager.
+Act as a Senior Data Engineer and expert in Synthetic Data Generation.
+My goal is to create a highly realistic, relational dataset for a Hotel Business Intelligence project ("The Azure Stay"). The problem context is "Revenue Leakage due to Cancellations & No-Shows."
 
-Context: You are tasked with generating a realistic dataset for a mid-sized independent hotel ("The Azure Stay") to analyze Revenue Leakage caused by cancellations and no-shows. The objective is to reduce revenue loss by at least 15% over 2 quarters.
+Your task is to write a complete, executable Python script using `pandas`, `numpy`, and `Faker` to generate exactly 10 interconnected CSV files based on the schema provided below. The central `fact_bookings` table MUST contain exactly 10,000 records.
 
-Instructions:
-Generate a comprehensive relational dataset in a spreadsheet format with exactly 10,000 records in the fact table covering the period from January 2024 to June 2025. The dataset must strictly adhere to Data Quality rules: 100% Completeness (no missing values unless logically required, e.g., cancellation_date for checked-in guests) and 100% Consistency.
+CRITICAL DATA QUALITY RULES (Must be strictly enforced in the Python code):
+1. Completeness: No missing values (NaN) unless explicitly logical (e.g., cancellation_date is NULL if status is 'Checked-In'). No further data cleaning should be required.
+2. Consistency (Referential Integrity): Foreign keys in the fact table MUST perfectly match the primary keys in the dimension tables. Dates must be logical (booking_date <= check_in_date < check_out_date).
+3. Financial Accuracy: 
+   - gross_revenue = base_rate * multiplier * number_of_rooms * LOS
+   - commission_amount = gross_room_revenue * commission_rate (if OTA)
+   - net_room_revenue = gross_room_revenue - commission_amount
 
-Schema Requirements:
-1. fact_bookings: booking_id (PK), guest_id (FK), booking_date, check_in_date, lead_time_days, length_of_stay, channel_id (FK), policy_id (FK), status (Checked-In, Cancelled, No-Show), cancellation_date, cancellation_reason_code, adr_usd, gross_revenue_usd, deposit_paid_usd, penalty_charged_usd.
-2. dim_policies: policy_id (PK), policy_name, cancellation_deadline_hours, penalty_type, is_refundable.
-3. dim_channels: channel_id (PK), channel_name, commission_rate.
-4. dim_guests: guest_id (PK), country_of_origin, total_bookings_lifetime, total_cancellations_lifetime, cancellation_ratio. (Ensure aggregate fields align perfectly with fact_bookings).
-5. dim_calendar: date_key (PK), day_of_week, month, is_weekend, event_flag.
-6. dim_reason_cancellation: cancellation_reason_code (PK) [RSN_01-RSN_06], reasons [Found Cheaper Price, Change of Plans, Flight/Weather, Visa Issues, Medical/Emergency, Unknown]
+EMBEDDED INSIGHTS & PATTERNS (DO NOT print these insights in the final output, just embed them mathematically into the data generation logic so I can discover them during EDA):
+- Pattern 1 (The OTA Trap): Bookings from OTA channels (Expedia, Booking) with a Booking Window of "Long (60+ days)" and a "Fully Flexible" policy should have a drastically higher cancellation rate (e.g., 45-55%).
+- Pattern 2 (Serial Cancellers): Create a subset of `guest_id`s (around 5-8% of total guests) who book repeatedly but have an abnormally high `cancellation_ratio` (> 80%). They tend to book "Suites" and cancel exactly 24-48 hours before the deadline.
+- Pattern 3 (The Weekend No-Show): "No-Show" rates should spike noticeably for "Direct Website" bookings on Fridays/Saturdays if no `deposit_paid` was collected.
+- Pattern 4 (Business vs. Leisure): "Business" segment guests booking "Corporate Negotiated" rates have a very low cancellation rate (< 5%) but extremely short Booking Lead Times (0-3 days).
 
-Behavioral Rules & Embedded Insights (Do not explicitly document these outputs, but embed them in data generation):
-- Create a realistic distribution of booking channels (e.g., OTAs, Direct, Walk-in).
-- Inject logical correlations: specific combinations of booking channels and lenient policies must have disproportionately high cancellation rates.
-- Simulate "Serial Cancellers": A small percentage of guests (e.g., 5%) should be responsible for a large volume of cancellations, booking well in advance and cancelling just before deadlines.
-- Simulate "Event Fake Demand": When event_flag = 1 in dim_calendar, there should be a spike in bookings with flexible policies that end up cancelling.
-- Calculate penalty_charged_usd dynamically based on the difference between cancellation_date, check_in_date, and the policy rules in dim_policies.
+SCHEMA DEFINITIONS:
+[Note: I want you to define the structures for these 10 tables in your Python script and export them to CSVs]
+1. dim_calendar (date_key, day_name, is_weekend, is_holiday, season, event_flag) - Cover 2 years.
+2. dim_roomtype (room_type_id, room_type_name, base_rate, capacity_count, max_capacity)
+3. dim_rate_codes (rate_code_id, rate_name, multiplier, is_commissionable)
+4. dim_channels (channel_id, channel_name, channel_type, commission_model, commission_rate, contract_owner)
+5. dim_policies (policy_id, policy_name, cancellation_deadline_hours, penalty_type, is_refundable)
+6. dim_reason_cancellations (cancellation_reason_code, reasons)
+7. dim_guests (guest_id, total_bookings_lifetime, total_cancellations_lifetime, cancellation_ratio, country_of_origin)
+8. dim_room_inventory (date, total_capacity, rooms_out_of_order, rooms_available_for_sale) - Set total hotel capacity to 150 rooms.
+9. fact_marketing_spend (spend_id, spend_date, channel_id, platform, cost_amount, clicks)
+10. fact_bookings (booking_id, guest_id, booking_date, check_in_date, check_out_date, room_type_id, rate_code_id, channel_id, segment_id, policy_id, status, total_room_revenue, number_of_rooms, adults_count, children_count, cancellation_date, cancellation_reason_code, gross_revenue, gross_room_revenue, commission_amount, net_room_revenue, penalty_charged, deposit_paid)
+
+Generate the complete Python script. Include comments explaining the probability distributions used to embed the secret patterns. Ensure the final lines of the script export all 10 pandas DataFrames to CSV files (e.g., `df_fact_bookings.to_csv('fact_bookings.csv', index=False)`).
 ```
 
 ## Promt สำหรับทำ eda + visualization
