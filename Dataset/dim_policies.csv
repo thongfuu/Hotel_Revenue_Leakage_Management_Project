@@ -1,0 +1,4 @@
+policy_id,policy_name,cancellation_deadline_hours,penalty_type,is_refundable
+POL_FLEX,Fully Flexible (24h),24,First Night,True
+POL_48H,48 Hour Cancellation,48,First Night,True
+POL_NONREF,Strict Non-Refundable,8760,Full Stay,False

@@ -1,0 +1,5 @@
+channel_id,channel_name,channel_type,commission_model,commission_rate,contract_owner
+CH_DIR,Direct Website,Direct,None,0.0,Internal
+CH_EXP,Expedia,OTA,Percentage,0.18,Alice Smith
+CH_BKG,Booking.com,OTA,Percentage,0.15,Bob Jones
+CH_CORP,Corporate Agent,Wholesale,Net Rate,0.0,Charlie Davis

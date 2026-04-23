@@ -1,0 +1,5 @@
+room_type_id,room_type_name,base_rate,capacity_count,max_capacity
+RT_STD,Standard Queen,2500,80,2
+RT_DLX,Deluxe King,3800,40,3
+RT_SUI,Suite,7500,10,4
+RT_OCN,Ocean View,5000,20,3
