@@ -25,7 +25,6 @@ Reduce revenue loss caused by fake or unstable demand.
 6. การยกเลิกส่วนใหญ่มักเกิดขึ้นซ้ำๆจากลูกค้ากลุ่มเดิมๆ (Serial Cancellers)
 7. ยิ่งจองล่วงหน้านาน (Long Lead Time) โอกาสยกเลิกยิ่งสูง และมักจะกดยกเลิกใกล้กับวันเข้าพัก
 8. No-Show มักเกิดขึ้นกระจุกตัวในวันหยุดสุดสัปดาห์ (ศุกร์-อาทิตย์)
-9. ค่าปรับ (Penalty) ที่ได้คืนมา สร้างรายได้ได้ต่ำกว่าเป้าหมาย โดยเฉพาะจากการจองแบบ Flexible ผ่าน OTA
 
 ## Prompt used for generating data
 ในการ generate dataset ชุดนี้ขึ้นมาใช้ทั้งหมด 2 prompt ตามลำดับดังนี้
