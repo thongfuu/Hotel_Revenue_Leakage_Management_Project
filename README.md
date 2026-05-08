@@ -189,7 +189,8 @@ df['cancel_window'] = pd.cut(df['recovery_days'], bins=bins_cw, labels=labels_cw
 **Methodology:**\
 คำนวณมูลค่าสูญเสียจริง โดยนำรายได้รวม (Gross Revenue) มาหักลบกับค่าปรับที่เก็บได้ (Penalty Charged) และจัดกลุ่มเปรียบเทียบ (Aggregation) ค่ารวมและค่าเฉลี่ยความเสียหายของสถานะ Cancelled เทียบกับ No-Show
 
-**Data Visualization:**\
+**Data Visualization:**
+
 Graph1: Grouped Bar Chart
 - ชื่อกราฟ1: เปรียบเทียบมูลค่าการจองที่สูญเสีย vs ความเสียหายจริง
 - การแสดงผล: 
@@ -280,7 +281,8 @@ H2.1 ระยะเวลาในการจองมีผลต่อกา
 **Methodology:**\
 จัดกลุ่มข้อมูล fact_bookings ตาม channel_type (OTA vs Direct) เพื่อนับจำนวน (Count) การจองทั้งหมดเทียบกับสถานะ Cancelled และ No-Show เพื่อหาเปอร์เซ็นต์อัตราการสูญเสียในแต่ละช่องทาง
 
-**Data Visualization:**\
+**Data Visualization:**
+
 Graph1: Donut Chart 
 - ชื่อกราฟ: สัดส่วนการยกเลิกห้องพักแยกตามช่องทาง (Share of Total Cancellations)
 - การแสดงผล: 
@@ -326,7 +328,8 @@ Graph1: Donut Chart 
 **Sub-Hypothesis Findings**\
 H2.1 ระยะเวลาในการจองมีผลต่อการ Cancel และ No-show 
 
-**Data Visualization:**\
+**Data Visualization:**
+
 Graph2: Stacked Bar Chart
 - ชื่อกราฟ: สัดส่วนสถานะการจอง เปรียบเทียบกลุ่ม OTA vs Direct
 - การแสดงผล:
@@ -402,7 +405,8 @@ Graph3: Horizontal Stacked Bar Chart
 **Methodology:**\
 นำข้อมูลมาหาอัตราการยกเลิก โดยแยกแกนตาม policy_id (FLEX, 48H, NONREF) และแยก Segment ย่อยด้วยสถานะการจ่ายมัดจำ (deposit_paid ว่ามีการเก็บมัดจำหรือไม่)
 
-**Data Visualization:** \
+**Data Visualization:** 
+
 Graph1: Heatmap
 - ชื่อกราฟ1: Heatmap วิเคราะห์ระดับความเสี่ยง - นโยบายการจอง vs การวางมัดจำ
 - การแสดงผล (Graph Elements):
@@ -484,7 +488,8 @@ Graph1: Heatmap
 **Methodology:**\
 Join ข้อมูลการจองเข้ากับ dim_calendar นำข้อมูลมาสรุปผลรวมและอัตราการยกเลิกแยกตาม Season (High, Low, Shoulder)
 
-**Data Visualization:**\
+**Data Visualization:**
+
 Graph1: Dual-Axis Combo Chart ผสมระหว่าง Bar Chart และ Line Chart
 - ชื่อกราฟ: การเปรียบเทียบยอดจองเฉลี่ยกับอัตราการยกเลิกรายเดือน
 - การแสดงผล:
@@ -562,7 +567,8 @@ Graph2: Bar Chart
 **Methodology:**\
 ใช้ Cross-tabulation สรุปผลความถี่ของเหตุผลการยกเลิก (cancellation_reason_code เช่น Change of Plans, Found Cheaper Price) โดยแยกตามรายประเทศ เพื่อดูความหนาแน่นของเหตุผลในแต่ละกลุ่ม
 
-**Data Visualization:**\
+**Data Visualization:**
+
 Graph1: Bubble Chart
 - ชื่อกราฟ: Relationship between Booking Volume and Cancel Rate by Country
 - การแสดงผล:
@@ -691,7 +697,8 @@ Graph2: Heatmap
 **Methodology:**\
 ตรวจสอบตาราง dim_guests เพื่อดูกลุ่มคนที่มีค่า cancellation_ratio (สัดส่วนประวัติการยกเลิกตลอดชีพ) สูง และเชื่อมกลับมาดูจำนวนครั้งที่คนกลุ่มนี้กดยกเลิกในตาราง fact_bookings
 
-**Data Visualization:**\
+**Data Visualization:**
+
 Graph1: Bar Chart
 - ชื่อกราฟ: ความเสียหาย "เฉลี่ยต่อหัว" (Avg. Loss per Guest)
 - การแสดงผล:
@@ -787,7 +794,8 @@ Graph2: Pie Chart
 **Methodology:**\
 สร้างตัวแปรใหม่ 2 ตัวคือ 1. Lead Time Bucket และ 2. Days Before Check-in (ระยะเวลาตั้งแต่วันที่กดยกเลิกจนถึงวันเข้าพัก) นำมาพล๊อตหรือจัดกลุ่มเพื่อดูพฤติกรรมที่เกิดขึ้น
 
-**Data Visualization:**\
+**Data Visualization:**
+
 Graph: Combo Chart
 - ชื่อกราฟ: อัตราการยกเลิก (Cancel Rate) ตามระยะเวลาจองล่วงหน้า
 - การแสดงผล:
