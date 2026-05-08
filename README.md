@@ -11,6 +11,7 @@
 
 # Prolect Canvas
 
+![Project Canvas](docs/project_canvas/Project_Canvas.jpg)
 
 # 1. Background and Pain points
 โรงแรมขนาดกลางที่บริหารงานอิสระชื่อ "The Azure Stay" แม้ว่าตัวโรงแรมจะสวยงามและมีศักยภาพ แต่ผลกำไรกลับหยุดนิ่งไม่เติบโต
