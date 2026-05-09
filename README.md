@@ -1596,3 +1596,6 @@ Generate the complete Python script. Include comments explaining the probability
 | platform | แพลตฟอร์มที่ใช้ยิงโฆษณา | String | Google Ads, Facebook Ads |
 | cost_amount | งบประมาณที่ใช้ไป (บาท) | Float | 5000.00 ถึง 25000.00 |
 | clicks | จำนวนคลิกที่ได้จากโฆษณา | Integer | 500 ถึง 3000 |
+
+**Presentation VDO**
+* https://drive.google.com/file/d/1I8UJDpIOvvXf5KIbcyjCnrp96P6s5OM1/view?usp=sharing
